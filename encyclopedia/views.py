@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from markdown2 import Markdown 
 
 from . import util
 
@@ -14,5 +15,5 @@ def wiki(request, entry):
     
     return render(request, "encyclopedia/wiki.html", {
         "title": entry,
-        "content": content
+        "content": Markdown().convert(content)
     })
