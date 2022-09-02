@@ -87,3 +87,27 @@ def random_entry(request):
     entries = util.list_entries()
     entry = random.choice(entries)
     return redirect("wiki", entry)
+
+def edit(request, entry):
+    if request.method == "GET":
+        title = entry
+        content = util.get_entry(title)
+        form = new_entry_form({
+            "title": title,
+            "content": content
+        })
+        return render(
+            request, 
+            "encyclopedia/edit.html",
+            {
+                "title": title,
+                "form": form.as_p
+             },
+        )
+        
+    form = new_entry_form(request.POST)
+    if form.is_valid(): 
+        title = form.cleaned_data.get("title")
+        content = form.cleaned_data.get("content")
+        util.save_entry(title=title, content=content)
+        return redirect("wiki", title)

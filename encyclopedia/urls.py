@@ -7,5 +7,6 @@ urlpatterns = [
     path("wiki/<str:entry>", views.wiki, name="wiki"), # Gets that wiki page
     path("search", views.search, name="search"), # If there is more than one found entry, it pulls up the search page
     path("new_entry", views.new_entry, name="new_entry"),
-    path("random_entry", views.random_entry, name="random_entry")
+    path("random_entry", views.random_entry, name="random_entry"),
+    path("edit/<str:entry>", views.edit, name="edit")
 ]
