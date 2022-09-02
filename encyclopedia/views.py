@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from markdown2 import Markdown 
 from django import forms 
 from django.core.files.storage import default_storage
-
+import random
 from . import util
 
 # Create Views Here 
@@ -82,3 +82,8 @@ def new_entry(request):
         return render(request, "encyclpedia/new_entry.html", {
             "form": form.as_p
         })
+        
+def random_entry(request):
+    entries = util.list_entries()
+    entry = random.choice(entries)
+    return redirect("wiki", entry)
