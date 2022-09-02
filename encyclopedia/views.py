@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect 
 from markdown2 import Markdown 
+from django import forms 
+from django.core.files.storage import default_storage
 
 from . import util
 
@@ -44,3 +46,39 @@ def search(request):
         "encyclopedia/search.html",
         {"found_entries": found_entries, "query": query}
     )
+    
+class new_entry_form(forms.Form):
+    title = forms.CharField(
+        required = True,
+        label = "Title",
+        widget = forms.TextInput()
+    )
+    content = forms.CharField(
+        required = True,
+        label = "Content",
+        widget=forms.Textarea())
+        
+def new_entry(request):
+    if request.method == "GET":
+        return render(request, "encyclopedia/new_entry.html", {
+            "form": new_entry_form().as_p
+        })
+        
+    form = new_entry_form(request.POST)
+    if form.is_valid():
+        title = form.cleaned_data.get("title")
+        content = form.cleaned_data.get("content")
+        filename = f"entries/{title}.md"
+        if default_storage.exists(filename):
+            return render(request, "encyclapedia/new_entry.html", {
+                "error": "Entry already exist",
+                "form": form.as_p
+            })
+        else:
+            with open(f"entries/{title}.md", "w") as file:
+                file.write(content)
+            return redirect("wiki", title)
+    else:
+        return render(request, "encyclpedia/new_entry.html", {
+            "form": form.as_p
+        })
